@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <video id="RTC-video"></video>
+  <script>
+    // 检查浏览器是否支持getUserMedia方法
+    navigator.getUserMedia = navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia;
+
+    if (navigator.getUserMedia) {
+      console.log('支持');
+      navigator.getUserMedia({
+        video: true,
+        audio: true
+      }, (stream) => {
+        let video = document.querySelector('#RTC-video')
+        // 不同的浏览器版本，支持不同的将视频流接入到视频节点上的方法
+        try {
+          // 旧方法
+          video.src = window.URL.createObjectURL(stream);
+        } catch (e) {
+          // 新方法
+          video.srcObject = stream;
+        }
+        // 需要调用播放方法
+        video.play();
+      }, (error) => {
+        console.error(error);
+      })
+      // 支持
+    } else {
+      console.log('不支持');
+      // 不支持
+    }
+  </script>
+</body>
+
+</html>
