@@ -10,6 +10,8 @@
 
 <body>
   <video id="RTC-video"></video>
+  <img src="" alt="" id="snapshotPreview">
+  <canvas id="canvas" style="display:none"></canvas>
   <script>
     // 检查浏览器是否支持getUserMedia方法
     navigator.getUserMedia = navigator.getUserMedia ||
@@ -17,13 +19,25 @@
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia;
 
+    let video = document.querySelector('#RTC-video')
+    let snapshotPreview = document.querySelector('#snapshotPreview')
+    let canvas = document.querySelector('#canvas')
+    // 获取一个canvas实例
+    const ctx = canvas.getContext('2d');
+    // 给video标签添加没有冒泡的点击事件
+    video.addEventListener('click', () => {
+      // 通过canvas的drawImage方法，将video图片源作为模板画图
+      ctx.drawImage(video, 0, 0)
+      // 将canvas截的图导出为img标签的src，然后展示出来
+      snapshotPreview.src = canvas.toDataURL('image/webp')
+    }, false)
+
     if (navigator.getUserMedia) {
       console.log('支持');
       navigator.getUserMedia({
         video: true,
         audio: true
       }, (stream) => {
-        let video = document.querySelector('#RTC-video')
         // 不同的浏览器版本，支持不同的将视频流接入到视频节点上的方法
         try {
           // 旧方法
